@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>GraphJS</title>
+        
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body class="w3-dark-gray">
+        <div id="page" class="w3-row w3-padding-large w3-cursive">
+            <header class="w3-col m5 l4 w3-card w3-margin w3-padding w3-round-large w3-gray">
+                <h1 class="w3-center w3-cursive w3-border-bottom w3-border-black">GraphJS</h1>
+                <nav class="w3-bar-block">
+                    <a class="w3-bar-item w3-round" href="#summary">About</a>
+                    <a class="w3-bar-item w3-round" href="#input">Calculator</a>
+                    <a class="w3-bar-item w3-round" href="#output">Output</a>
+                </nav>
+            </header>
+
+            <main class="w3-col m6 l7 w3-card w3-margin w3-padding w3-gray w3-round-large">
+                <section>
+                    <h1 id="summary" class="w3-cursive">About</h1>
+                    <p>This Website can be used to perform numerical calculations and graphical representation of mathematical functions.</p>
+                    <h3 class="w3-cursive">Key Features</h3 >
+                    <ol>
+                        <li>
+                            <b>Numerical Calculations</b>
+                            <ul>
+                                <li>The calculator handles standard arithmetic operations, including addition, subtraction, multiplication, and division. The calculations have to be in a syntax that can be executed as PHP code.</li>
+                                <li>Advanced functions such as square root (sqrt()), exponentiation (x^2) and trigonometric calculations (sin(a), cos(a), tan(a)) are available.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <b>Graph plotting</b>
+                            <ul>
+                                <li>Users can input mathematical functions, both simple and complex, into the calculator.</li>
+                                <li>Plotting can be done by using the plot(<i>equation</i>) function</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <b>Constants</b>
+                            <ul>
+                                <li>The calculator can use some important constants like PI or E.</li>
+                                <li>List of all available constants: %pi, %e</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <b>Sessions</b>
+                            <ul>
+                                <li>Your calculations will can be saved for future uses. To do that, enable the "save" option</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h1 id="input" class="w3-cursive">Calculator</h1>
+                    <p>Start writing your equations:</p>
+
+                    <form>
+                        <h3 class="w3-cursive">Options</h3>
+                        <div class="w3-row w3-margin-bottom">
+                            <div class="w3-col l4 m6">Angle unit:</div>
+                            <div class="w3-col l8 m6 custom-radio-container w3-card w3-round">
+                                <div class="custom-radio-input w3-light-gray">
+                                    <input id="angle_unit_rad" type="radio" name="angle_unit" value="rad" checked />
+                                    <label for="angle_unit_rad">Rad</label>
+                                </div>
+                                <div class="custom-radio-input w3-light-gray">
+                                    <input id="angle_unit_deg" type="radio" name="angle_unit" value="deg" />
+                                    <label for="angle_unit_deg">Deg</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w3-row w3-margin-bottom">
+                            <div class="w3-col l4 m6">Axis equal:</div>
+                            <div class="w3-col l8 m6 w3-center">
+                                <input id="persist" name="axis_equal" value="1" type="checkbox" class="w3-check" />
+                            </div>
+                        </div>
+
+                        <div class="w3-row w3-margin-bottom">
+                            <div class="w3-col l4 m6">Save calculation:</div>
+                            <div class="w3-col l8 m6 w3-row">
+                                <div class="w3-col l2 m3">
+                                    <input id="persist" name="persist" value="1" type="checkbox" class="w3-check" />
+                                </div>
+                                <div class="w3-col l10 m9">
+                                    <input type="text" class="w3-input" name="name" placeholder="Name" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="equations">
+
+                        </div>
+
+                        <input type="submit" class="w3-btn w3-card w3-round w3-block bg-primary" value="Execute" />
+                    </form>
+
+                    <h1 id="output" class="w3-cursive">Result</h1>
+                    <div id="result">
+                        <!-- Generated -->
+                    </div>
+                </section>
+                
+            </main>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

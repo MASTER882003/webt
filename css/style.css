@@ -1,0 +1,71 @@
+:root {
+    --primary: #0f9fbf;
+    --primary-text: white;
+}
+
+a {
+    text-decoration: none;
+    transition: all .5s ease;
+}
+a:hover {
+    background-color: var(--primary);
+    color: var(--primary-text);
+}
+
+input[type="checkbox"] {
+    accent-color: var(--primary);
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.bg-primary {
+    background-color: var(--primary);
+    color: var(--primary-text);
+}
+
+header nav a {
+    transition: all .3s ease;
+}
+
+header .navigation a:hover {
+    background-color: var(--primary);
+    color: var(--primary-text);
+}
+
+.calculator-line {
+    background-color: var(--primary);
+}
+
+.custom-radio-container {
+    display: flex;
+    overflow: hidden;
+}
+
+.custom-radio-input {
+    flex-grow: 1;
+}
+
+.custom-radio-input label {
+    display: block;
+    cursor: pointer;
+    padding: 5px;
+    text-align: center;
+    transition: all .3s ease;
+}
+
+.custom-radio-input:has(input[type="radio"]:checked) {
+    background-color: var(--primary) !important;
+    color: var(--primary-text) !important;
+}
+
+.custom-radio-input input[type="radio"] {
+    display: none;
+}
+
+#result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
