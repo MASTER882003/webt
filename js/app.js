@@ -1,17 +1,10 @@
 // Vars
 // -------------------------
-
-// Template for the equation lines
-const calculatorLineTemplate = `
-<div class="w3-card w3-padding w3-margin-bottom w3-dark-gray w3-round">
-    <input type="text" class="w3-input w3-round w3-light-gray" name="equation" />
-</div>
-`;
-
-const equationContainer = document.getElementById('equations');
 const form = document.querySelector('form');
+const canvas = document.getElementById('plot');
 const result = document.getElementById('result');
-const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary');
+const pageColorInput = document.querySelector('.page-color');
+let primaryColor = getComputedStyle(document.body).getPropertyValue('--primary');
 const axisEqual = () => document.querySelector('input[name="axis_equal"]').checked;
 
 // Util
@@ -22,13 +15,41 @@ function createNode(html) {
     return wrapper.firstElementChild;
 }
 
+function getCookie(name) {
+    const parts = `; ${document.cookie}`.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function setPrimaryColor(color) {
+    primaryColor = color;
+    document.querySelector('body').style.setProperty('--primary', primaryColor);
+    pageColorInput.value = primaryColor;
+}
+
 // Logic
 // -------------------------
 
 function init() {
 
-    // Add an initial equation line
-    appendEquationLine();
+    // Init page color
+    const storedColor = getCookie('color') ?? primaryColor;
+    if (storedColor != primaryColor) {
+        setPrimaryColor(decodeURIComponent(storedColor));
+    }
+
+    pageColorInput.value = primaryColor;
+
+    pageColorInput.addEventListener('change', function () {
+        const data = new FormData();
+        data.append('color', this.value);
+        data.append('action', 'save_color');
+        fetch('server.php', {
+            method: 'POST',
+            body: data
+        }).then(() => {
+            setPrimaryColor(this.value);
+        });
+    });
 
     // Init submit
     form.addEventListener('submit', onSubmit);
@@ -50,38 +71,9 @@ function init() {
     plot(data);
 }
 
-// Append a new equation line
-function appendEquationLine(afterElement = null) {
-    const line = createNode(calculatorLineTemplate);
-    const input = line.querySelector('input');
-    
-    if (!afterElement) {
-        equationContainer.appendChild(line);
-    } else {
-        afterElement.after(line);
-    }
 
-    line.addEventListener('keydown', (e) => {
-
-        // Append newline
-        if (e.shiftKey && e.key == 'Enter') {
-            e.preventDefault();
-            const newLine = appendEquationLine(line);
-            return newLine.querySelector('input').focus();
-        }
-
-        // Remove line
-        if (e.key == 'Backspace' && input.value.length == 0 && equationContainer.querySelectorAll('input').length > 1) {
-            return line.remove();
-        }
-    });
-
-    return line;
-}
-
-
-function onSubmit(e) {
-    e.preventDefault();
+function onSubmit(event) {
+    event.preventDefault();
 
     const data = new FormData(form);
     data.append('action', 'execute_equation');
@@ -107,8 +99,6 @@ function clearResult() {
 }
 
 function plot(dataPoints) {
-    const canvas = document.createElement('canvas');
-    result.appendChild(canvas);
 
     // Calculate width and height
     const width = result.clientWidth / 4 * 3;

@@ -66,6 +66,51 @@ header .navigation a:hover {
 
 #result {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+}
+
+main {
+    position: relative;
+}
+
+.page-color-selector {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.page-color-selector input[type="color"]:first-child {
+    padding: 0;
+    margin: 0;
+    border: 2px solid white;
+    box-shadow: none;
+    border-radius: 50%;
+    background: none;
+    margin-bottom: 20px;
+}
+
+.page-color-selector input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.page-color-selector input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.page-color-selector input[type="color"]:nth-child(2) {
+    padding: 0;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    border-radius: 100px;
+    outline: none;
+}
+
+.page-color-selector input[type="color" i] {
+    border-radius: 50%;
+    border: none;
+    height: 30px;
+    width: 30px;
+    display: block;
 }

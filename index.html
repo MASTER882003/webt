@@ -20,6 +20,11 @@
             </header>
 
             <main class="w3-col m6 l7 w3-card w3-margin w3-padding w3-gray w3-round-large">
+
+                <section class="page-color-selector">
+                    <input type="color" class="w3-gray page-color" />
+                </section>
+
                 <section>
                     <h1 id="summary" class="w3-cursive">About</h1>
                     <p>This Website can be used to perform numerical calculations and graphical representation of mathematical functions.</p>
@@ -47,9 +52,9 @@
                             </ul>
                         </li>
                         <li>
-                            <b>Sessions</b>
+                            <b>Saving equations</b>
                             <ul>
-                                <li>Your calculations will can be saved for future uses. To do that, enable the "save" option</li>
+                                <li>You can save your equation by checking the "Save equation" checkbox and by giving it a name.</li>
                             </ul>
                         </li>
                     </ol>
@@ -103,7 +108,7 @@
 
                     <h1 id="output" class="w3-cursive">Result</h1>
                     <div id="result">
-                        <!-- Generated -->
+                        <canvas id="plot"></canvas>
                     </div>
                 </section>
                 
