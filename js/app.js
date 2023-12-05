@@ -13,6 +13,8 @@ let plotConfig = {
     dataPoints: [],
     edgeValues: [-5, 5, -5, 5],
     minLinesX: 10,
+    offsetX: 0,
+    offsetY: 0,
     zoom: 5
 }
 
@@ -110,6 +112,34 @@ function init() {
         plot(plotConfig.dataPoints);
     });
 
+    // Dragging
+    let isDragging = false;
+    let startDragX, startDragY;
+
+    canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startDragX = e.clientX;
+        startDragY = e.clientY;
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const deltaX = e.clientX - startDragX;
+            const deltaY = e.clientY - startDragY;
+
+            plotConfig.offsetX += deltaX;
+            plotConfig.offsetY += deltaY;
+
+            plot(plotConfig.dataPoints);
+
+            startDragX = e.clientX;
+            startDragY = e.clientY;
+        }
+    });
 }
 
 
@@ -163,8 +193,8 @@ function plot(dataPoints) {
     // Calculate stuff
     const scale = width / ((edgeValues[1] - edgeValues[0]) / 2);
     const center = {
-        x: width / 2 + scale * (edgeValues[1] + edgeValues[0]) / 2,
-        y: height / 2 + scale * (edgeValues[3] + edgeValues[2]) / 2
+        x: width / 2 + scale * (edgeValues[1] + edgeValues[0]) / 2 + plotConfig.offsetX,
+        y: height / 2 + scale * (edgeValues[3] + edgeValues[2]) / 2 + plotConfig.offsetY
     };
 
     const dimension = parseInt((edgeValues[1] - edgeValues[0]).toExponential().split('e').pop()) - 1;
@@ -268,96 +298,5 @@ function plot(dataPoints) {
     ctx.stroke();
 }
 
-function plot_old(dataPoints) {
-    plotCache = dataPoints;
-
-    // Calculate width and height
-    const width = result.clientWidth / 4 * 3;
-    const height = 9 / 16 * width;
-    canvas.height = height;
-    canvas.width = width;
-
-    // Draw background
-    const ctx = canvas.getContext('2d');
-    ctx.lineWidth = 3;
-    ctx.fillStyle = "#616161";
-    ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-    
-    
-    // Find the minimum and maximum values for x and y
-    const minX = Math.min(...dataPoints.map(point => point.x));
-    const maxX = Math.max(...dataPoints.map(point => point.x));
-    const minY = Math.min(...dataPoints.map(point => point.y));
-    const maxY = Math.max(...dataPoints.map(point => point.y));
-
-    // Make sure we have some space between the plot and the edge of the canvas
-    const padding = Math.max(height, width) * 0.08;
-
-    // Calculate the scaling
-    let xScale = (width - 2 * padding) / (maxX - minX);
-    let yScale = (height - 2 * padding) / (maxY - minY);
-
-    if (axisEqual()) {
-        xScale = yScale = Math.min(xScale, yScale);
-    }
-
-    const positionXAxis = height - padding - Math.abs(Math.min(0, minY)) * yScale;
-    const positionYAxis = width - padding - Math.abs(Math.min(0, minX)) * xScale;
-
-    // Set up axis
-    ctx.strokeStyle = 'white';
-    ctx.beginPath();
-    // X-Axis
-    ctx.moveTo(padding, positionXAxis);
-    ctx.lineTo(width - padding, positionXAxis);
-    // Y-Axis
-    ctx.moveTo(positionYAxis, padding);
-    ctx.lineTo(positionYAxis, height - padding);
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = 'white';
-    if (maxX != 0) {
-        ctx.fillText(maxX, width - padding - toString(maxX).length, positionXAxis + 15);
-    }
-    if (minX != 0 && minX < 0) {
-        ctx.fillText(minX, padding, positionXAxis + 15);
-    }
-    if (maxY != 0) {
-        ctx.fillText(maxY, positionYAxis + 5, padding);
-    }
-    if (minY != 0 && minY < 0) {
-        ctx.fillText(minY, positionYAxis + 5, height - padding);
-    }
-    // Zero (Center)
-    ctx.fillText('0', positionYAxis + 5, positionXAxis + 10);
-
-    // No data
-    if (dataPoints.length == 0) return;
-
-    // Plot the graph
-    ctx.beginPath();
-
-    // Go to starting point
-    ctx.moveTo(positionYAxis + dataPoints[0].x * xScale, positionXAxis - dataPoints[0].y * yScale);
-
-    for (let i = 1; i < dataPoints.length; i++) {
-        if (dataPoints[i].y == null) {
-
-            // Go to next point if possible
-            if (i + 1 < dataPoints.length) {
-                ctx.moveTo(positionYAxis + dataPoints[i + 1].x * xScale, positionXAxis - dataPoints[i + 1].y * yScale);
-            }
-
-            continue;
-        }
-        const x = positionYAxis + dataPoints[i].x * xScale;
-        const y = positionXAxis - dataPoints[i].y * yScale;
-        ctx.lineTo(x, y);
-    }
-
-    ctx.strokeStyle = primaryColor;
-    ctx.stroke();
-}
 
 window.onload = init();
