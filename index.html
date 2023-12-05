@@ -100,11 +100,25 @@
                         </div>
 
                         <div id="equations">
-
+                            <div class="w3-card w3-padding w3-margin-bottom w3-dark-gray w3-round">
+                                <input type="text" class="w3-input w3-round w3-light-gray" name="equation" />
+                            </div>                            
                         </div>
 
                         <input type="submit" class="w3-btn w3-card w3-round w3-block bg-primary" value="Execute" />
                     </form>
+
+                    <div class="w3-row w3-margin-bottom w3-margin-top w3-padding-top-24 w3-border-top">
+                        <div class="w3-col l4 m6">
+                            <label for="load_equation">Or load a previous equation:</label>
+                        </div>
+                        <div class="w3-col l8 m6 w3-row">
+                            <select name="name" id="load_equation" class="w3-select w3-border">
+                                <option value="" disabled selected>No equations stored</option>
+                            </select>
+                        </div>
+                    </div>
+
 
                     <h1 id="output" class="w3-cursive">Result</h1>
                     <div id="result">

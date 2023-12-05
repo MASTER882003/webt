@@ -4,8 +4,10 @@ const form = document.querySelector('form');
 const canvas = document.getElementById('plot');
 const result = document.getElementById('result');
 const pageColorInput = document.querySelector('.page-color');
+const equationLoaderDropdown = document.querySelector('select');
 let primaryColor = getComputedStyle(document.body).getPropertyValue('--primary');
 const axisEqual = () => document.querySelector('input[name="axis_equal"]').checked;
+let plotCache = [];
 
 // Util
 // -------------------------
@@ -24,6 +26,20 @@ function setPrimaryColor(color) {
     primaryColor = color;
     document.querySelector('body').style.setProperty('--primary', primaryColor);
     pageColorInput.value = primaryColor;
+
+    if (plotCache.length > 0) plot(plotCache);
+}
+
+function reloadStoredEquations() {
+    fetch('server.php?action=get_equations').then(response => response.json()).then(response => {
+        if (response.data.equations.length == 0) return;
+
+        equationLoaderDropdown.innerHTML = '';
+        equationLoaderDropdown.append(new Option('Select equation', null));
+
+        response.data.equations.map(equation => new Option(equation.name, equation.name))
+            .forEach(option => equationLoaderDropdown.append(option));
+    });
 }
 
 // Logic
@@ -32,6 +48,7 @@ function setPrimaryColor(color) {
 function init() {
 
     // Init page color
+    // ----------
     const storedColor = getCookie('color') ?? primaryColor;
     if (storedColor != primaryColor) {
         setPrimaryColor(decodeURIComponent(storedColor));
@@ -39,6 +56,7 @@ function init() {
 
     pageColorInput.value = primaryColor;
 
+    // Page color change
     pageColorInput.addEventListener('change', function () {
         const data = new FormData();
         data.append('color', this.value);
@@ -51,24 +69,22 @@ function init() {
         });
     });
 
+    // Load stored equations
+    reloadStoredEquations();
+
+    equationLoaderDropdown.addEventListener('change', function () {
+        fetch('server.php?action=get_equation&name=' + this.value).then(response => response.json()).then(response => {
+            document.querySelector(`#angle_unit_${response.data.equation.angle_unit}`).checked = true;
+            document.querySelector(`input[name="persist"]`).checked = true;
+            document.querySelector(`input[name="name"]`).value = response.data.equation.name;
+            document.querySelector(`input[name="equation"]`).value = response.data.equation.equation;
+
+            plot(response.data.plot);
+        })
+    })
+
     // Init submit
     form.addEventListener('submit', onSubmit);
-
-    const graph = {
-        min: -3,
-        max: 3,
-        stepLength: .05,
-        equation: (x) => x ** 3 - 3 * x + 2
-    }
-
-    const data = [];
-    for (let x = graph.min; x <= graph.max; x += graph.stepLength) {
-        data.push({
-            x,
-            y: graph.equation(x)
-        })
-    }
-    plot(data);
 }
 
 
@@ -84,8 +100,11 @@ function onSubmit(event) {
     })
     .then(response => response.json())
     .then(response => {
-            clearResult();
-            plot(response.plot);
+        plot(response.data.plot);
+
+        if (document.querySelector('input[name="persist"]').checked) {
+            reloadStoredEquations();
+        }
     })
     .catch(error => {
         console.log(error);
@@ -94,11 +113,8 @@ function onSubmit(event) {
     return false;
 }
 
-function clearResult() {
-    result.innerHTML = '';
-}
-
 function plot(dataPoints) {
+    plotCache = dataPoints;
 
     // Calculate width and height
     const width = result.clientWidth / 4 * 3;
@@ -171,6 +187,15 @@ function plot(dataPoints) {
     ctx.moveTo(positionYAxis + dataPoints[0].x * xScale, positionXAxis - dataPoints[0].y * yScale);
 
     for (let i = 1; i < dataPoints.length; i++) {
+        if (dataPoints[i].y == null) {
+
+            // Go to next point if possible
+            if (i + 1 < dataPoints.length) {
+                ctx.moveTo(positionYAxis + dataPoints[i + 1].x * xScale, positionXAxis - dataPoints[i + 1].y * yScale);
+            }
+
+            continue;
+        }
         const x = positionYAxis + dataPoints[i].x * xScale;
         const y = positionXAxis - dataPoints[i].y * yScale;
         ctx.lineTo(x, y);

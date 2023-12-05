@@ -1,3 +1,6 @@
 ## Very important stuff
 ---
-- [] Labels
+- [] Make graph look good with high values
+- [] Zooming and moving
+- [] Show errors
+- [] Client side validation 
