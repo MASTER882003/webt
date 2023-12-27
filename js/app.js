@@ -2,28 +2,27 @@
 // -------------------------
 const form = document.querySelector('form');
 const canvas = document.getElementById('plot');
+const ctx = canvas.getContext('2d');
 const result = document.getElementById('result');
 const pageColorInput = document.querySelector('.page-color');
 const equationLoaderDropdown = document.querySelector('select');
-let primaryColor = getComputedStyle(document.body).getPropertyValue('--primary');
+const getPrimaryColor = () => getComputedStyle(document.body).getPropertyValue('--primary');
 
 // Initial plotConfig
 let plotConfig = {
     dataPoints: [],
-    edgeValues: [-5, 5, -5, 5],
     minLinesX: 10,
     offsetX: 0,
     offsetY: 0,
-    zoom: 5
+    zoom: 10
 }
 
 // Util
 // -------------------------
 
 function setPrimaryColor(color) {
-    primaryColor = color;
-    document.querySelector('body').style.setProperty('--primary', primaryColor);
-    pageColorInput.value = primaryColor;
+    document.querySelector('body').style.setProperty('--primary', color);
+    pageColorInput.value = color;
 
     if (plotConfig.dataPoints.length > 0) plot(plotConfig.dataPoints);
 }
@@ -38,6 +37,14 @@ function reloadStoredEquations() {
         response.data.equations.map(equation => new Option(equation.name, equation.name))
             .forEach(option => equationLoaderDropdown.append(option));
     });
+}
+
+function drawLine(from, to) {
+    ctx.beginPath();
+    ctx.moveTo(from[0], from[1]);
+    ctx.lineTo(to[0], to[1]);
+    ctx.closePath();
+    ctx.stroke();
 }
 
 // Validation
@@ -165,11 +172,17 @@ function init() {
             startDragY = e.clientY;
         }
     });
+
+    // Create default plot
+    plot([]);
 }
 
 
 function onSubmit(event) {
     event.preventDefault();
+
+    // Reset errors
+    document.querySelectorAll('.error').forEach(element => element.innerHTML = '');
 
     const data = new FormData(form);
     data.append('action', 'execute_equation');
@@ -191,24 +204,20 @@ function onSubmit(event) {
     fetch('server.php', {
         method: 'POST',
         body: data
-    })
-    .then(response => response.json())
-    .then(response => {
+    }).then(response => response.json())
+        .then(response => {
 
-        // Reset errors
-        document.querySelectorAll('.error').forEach(element => element.innerHTML = '');
+            if (response.errors) return showErrors(response.errors);
 
-        if (response.errors) return showErrors(response.errors);
+            plot(response.data.plot);
 
-        plot(response.data.plot);
-
-        if (document.querySelector('input[name="persist"]').checked) {
-            reloadStoredEquations();
-        }
-    })
-    .catch(error => {
-        console.log(error);
-    })
+            if (document.querySelector('input[name="persist"]').checked) {
+                reloadStoredEquations();
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        })
 
     return false;
 }
@@ -217,103 +226,90 @@ function plot(dataPoints) {
 
     // Stored if color of website changes and other changes
     plotConfig.dataPoints = dataPoints;
-
-    // Recalculate the edge values
-    const edgeValues = plotConfig.edgeValues.map(v => v * plotConfig.zoom);
-
     // Calculate width and height
     const width = canvas.width = result.clientWidth;
     const height = canvas.height = 9 / 16 * width;
 
     // Draw background / Clear
-    const ctx = canvas.getContext('2d');
     ctx.font = '10px Arial';
     ctx.fillStyle = "#616161";
     ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
     // Calculate stuff
-    const scale = width / ((edgeValues[1] - edgeValues[0]) / 2);
-    const center = {
-        x: width / 2 + scale * (edgeValues[1] + edgeValues[0]) / 2 + plotConfig.offsetX,
-        y: height / 2 + scale * (edgeValues[3] + edgeValues[2]) / 2 + plotConfig.offsetY
+    const canvasScale = width / (2 * plotConfig.zoom);
+    const centerPosition = {
+        x: width / 2 + plotConfig.offsetX,
+        y: height / 2 + plotConfig.offsetY
     };
+    const visibleXValues = [
+        -plotConfig.zoom - plotConfig.offsetX / canvasScale,
+        plotConfig.zoom - plotConfig.offsetX / canvasScale
+    ];
 
-    const dimension = parseInt((edgeValues[1] - edgeValues[0]).toExponential().split('e').pop()) - 1;
+    const dimension = parseInt((visibleXValues[1] - visibleXValues[0]).toExponential().split('e').pop()) - 1;
 
     let stepSize = 1 * 10 ** dimension;
-    if ((edgeValues[1] - edgeValues[0]) / ((2 * 10 ** dimension) / plotConfig.zoom) >= plotConfig.minLinesX) {
+    if ((visibleXValues[1] - visibleXValues[0]) / ((2 * 10 ** dimension)) >= plotConfig.minLinesX) {
         stepSize = 2 * 10 ** dimension;
     }
-    else if ((edgeValues[1] - edgeValues[0]) / ((5 * 10 ** dimension) / plotConfig.zoom) >= plotConfig.minLinesX) {
+    if ((visibleXValues[1] - visibleXValues[0]) / ((5 * 10 ** dimension)) >= plotConfig.minLinesX) {
         stepSize = 5 * 10 ** dimension;
     }
 
-    let spaceBetweenLines = stepSize * scale;
-    let steps = (edgeValues[1] - edgeValues[0]) / stepSize;
-
+    const spaceBetweenLines = stepSize * canvasScale;
     // Draw coordinate system
     // ---------------------------------
+    // Lines across
     ctx.fillStyle = 'white';
     ctx.strokeStyle = 'gray';
     ctx.lineWidth = 2;
-    let counter = 0;
-    // X-Axis lines
-    for (let i = 0; i <= steps; i++) {
-        counter++;
 
+    // X-Lines to right
+    for (let i = 1; centerPosition.x + i * spaceBetweenLines < width; i++) {
         const axisLabel = dimension < 0 ? (i * stepSize).toFixed(Math.min(20, -dimension)) : i * stepSize;
 
-        // Right
-        ctx.beginPath();
-        ctx.moveTo(center.x + i * spaceBetweenLines, 0);
-        ctx.lineTo(center.x + i * spaceBetweenLines, height);
-        ctx.fillText(axisLabel, center.x + i * spaceBetweenLines, center.y + 15);
-
-        // Left
-        ctx.moveTo(center.x - i * spaceBetweenLines, 0);
-        ctx.lineTo(center.x - i * spaceBetweenLines, height);
-        ctx.stroke();
-        ctx.fillText(-axisLabel, center.x - i * spaceBetweenLines, center.y + 15);
-        ctx.closePath();
-        ctx.stroke();
-
+        drawLine([centerPosition.x + i * spaceBetweenLines, 0], [centerPosition.x + i * spaceBetweenLines, height]);
+        ctx.fillText(axisLabel, centerPosition.x + i * spaceBetweenLines, centerPosition.y + 15);
     }
 
-    // Y-Axis Lines
-    for (let i = 0; i <= steps; i++) {
-
+    // X-Lines to left
+    for (let i = 1; centerPosition.x - i * spaceBetweenLines > 0; i++) {
         const axisLabel = dimension < 0 ? (i * stepSize).toFixed(Math.min(20, -dimension)) : i * stepSize;
-
-        // Top
-        ctx.beginPath();
-        ctx.moveTo(0, center.y - i * spaceBetweenLines);
-        ctx.lineTo(width, center.y - i * spaceBetweenLines);
-        ctx.fillText(axisLabel, center.x + 5, center.y - i * spaceBetweenLines - 5);
         
-        // Bottom
-        ctx.moveTo(0, center.y + i * spaceBetweenLines);
-        ctx.lineTo(width, center.y + i * spaceBetweenLines);
-        ctx.fillText(-axisLabel, center.x + 5, center.y + i * spaceBetweenLines - 5);
-        ctx.closePath();
-        ctx.stroke();
+        drawLine([centerPosition.x - i * spaceBetweenLines, 0], [centerPosition.x - i * spaceBetweenLines, height]);
+        ctx.fillText(-axisLabel, centerPosition.x - i * spaceBetweenLines, centerPosition.y + 15);
     }
 
+
+    // Y-Lines to top
+    for (let i = 0; centerPosition.y - i * spaceBetweenLines > 0; i++) {
+        const axisLabel = dimension < 0 ? (i * stepSize).toFixed(Math.min(20, -dimension)) : i * stepSize;
+
+        drawLine([0, centerPosition.y - i * spaceBetweenLines], [width, centerPosition.y - i * spaceBetweenLines]);
+        ctx.fillText(axisLabel, centerPosition.x + 5, centerPosition.y - i * spaceBetweenLines - 5);
+
+    }
+
+    // Y-Lines to bottom
+    for (let i = 0; centerPosition.y + i * spaceBetweenLines < height; i++) {
+        const axisLabel = dimension < 0 ? (i * stepSize).toFixed(Math.min(20, -dimension)) : i * stepSize;
+        
+        drawLine([0, centerPosition.y + i * spaceBetweenLines], [width, centerPosition.y + i * spaceBetweenLines]);
+        ctx.fillText(-axisLabel, centerPosition.x + 5, centerPosition.y + i * spaceBetweenLines - 5);
+    }
+
+    
     // X and Y Axis
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 3;
     // X
-    ctx.beginPath();
-    ctx.moveTo(center.x, 0);
-    ctx.lineTo(center.x, height);
+    drawLine([centerPosition.x, 0], [centerPosition.x, height]);
     // Y
-    ctx.moveTo(0, center.y);
-    ctx.lineTo(width, center.y);
-    ctx.closePath();
-    ctx.stroke();
-    
+    drawLine([0, centerPosition.y], [width, centerPosition.y]);
     // Zero (Center)
-    ctx.fillText('0', center.x + 5, center.y + 15);
+    ctx.fillText('0', centerPosition.x + 5, centerPosition.y + 15);
     ctx.stroke();
+
 
     // Plotting
     // -----------------------
@@ -321,24 +317,15 @@ function plot(dataPoints) {
     if (dataPoints.length == 0) return;
 
     // Plot the graph
+    ctx.strokeStyle = getPrimaryColor();
     ctx.beginPath();
 
     // Go to starting point
-    ctx.moveTo(center.x + dataPoints[0].x * scale, center.y - dataPoints[0].y * scale);
+    ctx.moveTo(centerPosition.x + dataPoints[0].x * canvasScale, centerPosition.y - dataPoints[0].y * canvasScale);
 
     for (let i = 1; i < dataPoints.length; i++) {
-        if (dataPoints[i].y == null) {
-
-            // Go to next point if possible
-            if (i + 1 < dataPoints.length) {
-                ctx.moveTo(center.x + dataPoints[i + 1].x * scale, center.y - dataPoints[i + 1].y * scale);
-            }
-            continue;
-        }
-        ctx.lineTo(center.x + dataPoints[i].x * scale, center.y - dataPoints[i].y * scale);
+        ctx.lineTo(centerPosition.x + dataPoints[i].x * canvasScale, centerPosition.y - dataPoints[i].y * canvasScale);
     }
-
-    ctx.strokeStyle = primaryColor;
     ctx.stroke();
 }
 

@@ -26,15 +26,18 @@
                     <section>
                         <div class="w3-row">
                             <div class="w3-col l2 m3 s4">
-                                <img src="img/image.png" alt="Image of a plot" width="70" />
+                                <img src="img/image.png" alt="A graphical representation of a simple plot" width="70" />
                             </div>
-                            <h1 id="summary" class="w3-cursive w3-col l8 m7 s5">About</h1>
-                            <div class="w3-col l2 m2 s3 w3-right-align page-color-selector">
-                                <input type="color" class="w3-gray page-color" />
+                            <h2 id="summary" class="w3-cursive w3-col l8 m7 s5">About</h2>
+                            <div class="w3-col l2 m2 s3 w3-right-align">
+                                <label class="w3-block" for="page-color">Color</label>
+                                <div class="page-color-selector">
+                                    <input type="color" id="page-color" class="w3-gray page-color" />
+                                </div>
                             </div>
                         </div>
                         <p>This Website can be used to plot mathematical equations.</p>
-                        <h3 class="w3-cursive">Key Features</h3 >
+                        <h2 class="w3-cursive">Key Features</h2 >
                         <ol>
                             <li>
                                 <b>Diverse equations</b>
@@ -68,7 +71,7 @@
                     </section>
     
                     <section>
-                        <h1 id="input" class="w3-cursive">Calculator</h1>
+                        <h2 id="input" class="w3-cursive">Calculator</h2>
                         <p>Start writing your equations:</p>
     
                         <form>
@@ -76,16 +79,19 @@
                             <div class="w3-row w3-margin-bottom">
                                 <div class="w3-col l4 m6">Angle unit:</div>
                                 <div class="w3-col l8 m6">
-                                    <div class="custom-radio-container w3-round w3-card w3-round">
-                                        <div class="custom-radio-input w3-light-gray">
-                                            <input id="angle_unit_rad" type="radio" name="angle_unit" value="rad" checked />
-                                            <label for="angle_unit_rad">Rad</label>
+                                    <fieldset>
+                                        <legend>Select angle_unit</legend>
+                                        <div class="custom-radio-container w3-round w3-card">
+                                            <div class="custom-radio-input w3-light-gray">
+                                                <input id="angle_unit_rad" type="radio" name="angle_unit" value="rad" checked />
+                                                <label for="angle_unit_rad">Rad</label>
+                                            </div>
+                                            <div class="custom-radio-input w3-light-gray">
+                                                <input id="angle_unit_deg" type="radio" name="angle_unit" value="deg" />
+                                                <label for="angle_unit_deg">Deg</label>
+                                            </div>
                                         </div>
-                                        <div class="custom-radio-input w3-light-gray">
-                                            <input id="angle_unit_deg" type="radio" name="angle_unit" value="deg" />
-                                            <label for="angle_unit_deg">Deg</label>
-                                        </div>
-                                    </div>
+                                    </fieldset>
                                     <div class="error" data-related-field="angle_unit"></div>
                                 </div>
                             </div>
@@ -93,23 +99,24 @@
                             <div class="w3-row w3-margin-bottom">
                                 <label class="w3-col l4 m6" for="persist">Save equation:</label>
                                 <div class="w3-col l8 m6">
-                                    <div class="w3-row">
-                                        <div class="w3-col l2 m3">
-                                            <input id="persist" name="persist" value="1" type="checkbox" class="w3-check" />
-                                        </div>
-                                        <div class="w3-col l10 m9">
-                                            <input type="text" class="w3-input" name="name" placeholder="Name" />
-                                        </div>
-                                    </div>
+                                    <input id="persist" name="persist" value="1" type="checkbox" class="w3-check" />
+                                </div>
+                            </div>
+
+                            <div class="w3-row w3-margin-bottom">
+                                <label class="w3-col l4 m6" for="name">Name:</label>
+                                <div class="w3-col l8 m6">
+                                    <input type="text" class="w3-input" id="name" name="name" />
                                     <div class="error" data-related-field="name"></div>
                                 </div>
                             </div>
     
-                            <div id="equations">
-                                <div class="w3-card w3-padding w3-margin-bottom w3-dark-gray w3-round">
-                                    <input type="text" class="w3-input w3-round w3-light-gray" name="equation" />
+                            <div class="w3-row w3-margin-bottom">
+                                <label class="w3-col l4 m6" for="equation">Equation:</label>
+                                <div class="w3-col l8 m6 w3-card w3-padding w3-margin-bottom w3-dark-gray w3-round">
+                                    <input type="text" class="w3-input w3-round w3-light-gray" id="equation" name="equation" />
                                     <div class="error" data-related-field="equation"></div>
-                                </div>                            
+                                </div>
                             </div>
     
                             <input type="submit" class="w3-btn w3-card w3-round w3-block bg-primary" value="Execute" />
@@ -127,7 +134,7 @@
                         </div>
     
     
-                        <h1 id="output" class="w3-cursive">Result</h1>
+                        <h2 id="output" class="w3-cursive">Result</h2>
                         <div id="result">
                             <canvas id="plot"></canvas>
                         </div>
@@ -136,6 +143,6 @@
             </main>
         </div>
 
-        <script src="js/app.js"></script>
+        <script src="var/app.min.js"></script>
     </body>
 </html>

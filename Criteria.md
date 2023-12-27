@@ -4,10 +4,10 @@
 - [x]  Einheitliches Thema
 - [x]  Nur besprochene Technologien
 - [ ] Begrenzungen
-  - [ ] 200 Zeilen HTML
-  - [ ] 200 Zeilen CSS
+  - [x] 200 Zeilen HTML
+  - [x] 200 Zeilen CSS
   - [ ] 200 Zeilen JS
-  - [ ] 200 Zeilen PHP
+  - [x] 200 Zeilen PHP
 
 ## Frontend
 ---
@@ -25,10 +25,10 @@
 - [x] Bei Klick auf Button Daten ans Backend senden
   - [x] Kein Page reload
   - [x] Antwort des Backends vollständig in den Ausgabebereich des HTML-Dokuments integrieren
-- [ ] Nur gültiges HTML
+- [x] Nur gültiges HTML
 - [x] JS und CSS in separaten Dateien
-- [x] Dokumentrelativer URLs
-- [ ] Erfüllen der WCAG-Erfolgskriterien 1.1.1 und 1.3.1
+- [x] Dokumentrelative URLs
+- [x] Erfüllen der WCAG-Erfolgskriterien 1.1.1 und 1.3.1
 - [x] Responsives Layout
   - [x] Unterschiedliche und geeignete Darstellungen für Mobile und Desktop
   - [x] Responsivees Layout mit W3.CSS erfolgen
@@ -39,7 +39,7 @@
 ```
 - [x] Canvas
   - [x] Mindestens zehn Zeichenoperationen (lineTo, arc, fillRect...)
-  - [x] Muss sich während der Anzeige des HTML-Dokuments dynamisch verändern (Benutzereingabe oder Zeitlich)
+  - [x] Muss sich während der Anzeige des HTML-Dokuments dynamisch verändern (Benutzereingabe oder zeitlich)
 
 ## Backend
 ---
@@ -74,16 +74,16 @@ Letztmöglicher Termin: **12.01.2024 23:59**
 
 | Bewertungskriterium                      | HEP | Maximale Punkte |
 | ---------------------------------------- | --- | --------------- |
-| Frontend: Navigationsleiste              |     | 2               |
-| Frontend: Informationsabschnitt          |     | 2               |
-| Frontend: Eingabe und Senden             |     | 5               |
-| Frontend: Empfangen und Ausgabe          |     | 5               |
-| Backend: Effekt und JSON-Antwort         |     | 5               |
-| Backend: Cookie                          |     | 3               |
-| Darstellung / Layout: Responsives Layout |     | 4               |
-| Canvas                                   |     | 4               |
-| Validierung: Frontend                    |     | 6               |
-| Validierung: Backend                     |     | 6               |
-| Zusatztechnik                            |     | 6               |
-| Einhaltung des Abgabeformats             |     | 1               |
-| Einhaltung der Limiten                   |     | 1               |
+| Frontend: Navigationsleiste              |  2  | 2               |
+| Frontend: Informationsabschnitt          |  2  | 2               |
+| Frontend: Eingabe und Senden             |  5  | 5               |
+| Frontend: Empfangen und Ausgabe          |  5  | 5               |
+| Backend: Effekt und JSON-Antwort         |  3  | 5               |
+| Backend: Cookie                          |  0  | 3               |
+| Darstellung / Layout: Responsives Layout |  1  | 4               |
+| Canvas                                   |  4  | 4               |
+| Validierung: Frontend                    |  6  | 6               |
+| Validierung: Backend                     |  6  | 6               |
+| Zusatztechnik                            |  6  | 6               |
+| Einhaltung des Abgabeformats             |  1  | 1               |
+| Einhaltung der Limiten                   |  0  | 1               |

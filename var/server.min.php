@@ -46,7 +46,7 @@ $validationRules = [
     ],
     'hex_code' => [
         'validator' => fn ($value) => preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/', $value) > 0,
-        'message' => '{label} is not a valid hexcode'
+        'message' => '{label} is not a valid hexcode.'
     ],
     'deg_or_rad' => [
         'validator' => fn ($value) => in_array($value, ['rad', 'deg']),
@@ -54,7 +54,7 @@ $validationRules = [
     ],
     'equation' => [
         'validator' => fn ($value) => preg_match('/^(?:[x \(\)\*+-\/0-9]|sin|cos|tan|sqrt|%pi|%e)*$/', $value) > 0,
-        'message' => 'Not a valid equation'
+        'message' => '{label} is not a valid equation.'
     ]
 ];
 function validate($data, $fields, $dieOnError = FALSE) {
@@ -90,10 +90,10 @@ $actions = [
         respond(['success' => TRUE]);
     },
     'get_color' => function () {
-        $color = $_COOKIE['color'] ?? '#0f9fbf';
+        $color = $_COOKIE['color'] ?? '#a534da';
         respond(['data' => ['color' => $color]]);
     },
-    'get_equations' => fn () => respond(['data' => ['equations' => query('SElECT * FROM equation')]]),
+    'get_equations' => fn () => respond(['data' => ['equations' => query('SELECT * FROM equation')]]),
     'get_equation' => function () {
         validate($_GET, [
             'name' => [

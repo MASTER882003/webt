@@ -130,3 +130,12 @@ main {
 .error:empty {
     display: none;
 }
+
+
+fieldset {
+    border: none;
+}
+
+legend {
+    display: none;
+}
