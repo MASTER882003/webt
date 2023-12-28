@@ -33,6 +33,10 @@ function getEquation($name) {
     return query('SELECT * FROM equation WHERE name = :name', ['name' => $name])[0] ?? NULL;
 }
 
+function getEquationsFromCurrentUser() {
+    return !empty($_COOKIE['user_id']) ? query('SELECT * FROM equation WHERE user_id = :user_id', ['user_id' => $_COOKIE['user_id']]) : [];
+}
+
 
 // Database
 // -------------------
@@ -140,7 +144,7 @@ $actions = [
         respond(['data' => ['color' => $color]]);
     },
 
-    'get_equations' => fn () => respond(['data' => ['equations' => query('SELECT * FROM equation')]]),
+    'get_equations' => fn () => respond(['data' => ['equations' => getEquationsFromCurrentUser()]]),
 
     'get_equation' => function () {
         validate($_GET, [
@@ -197,14 +201,20 @@ $actions = [
         if (!$plot) respond(['errors' => ['equation' => ['Your equations as an invalid syntax']]], 400);
 
         if ($persist) {
-            query('REPLACE INTO `equation` (`name`, `angle_unit`, `equation`) VALUES (:name, :angle_unit, :equation)', [
+            // Generate a user_id
+            $_COOKIE['user_id'] = $_COOKIE['user_id'] ?? uniqid('', TRUE);
+            // Update cookie
+            setcookie('user_id', $_COOKIE['user_id'], strtotime('+1 year'));
+
+            query('REPLACE INTO `equation` (`name`, `user_id`, `angle_unit`, `equation`) VALUES (:name, :user_id, :angle_unit, :equation)', [
+                'user_id' => $_COOKIE['user_id'],
                 'name' => $name,
                 'angle_unit' => $angleUnit,
                 'equation' => $equation
             ]);
         }
 
-        respond(['data' => ['plot' => $plot]]);
+        respond(['data' => ['plot' => $plot, 'equations' => getEquationsFromCurrentUser()]]);
     },
 ];
 

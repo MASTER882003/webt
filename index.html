@@ -16,7 +16,7 @@
                     <nav class="w3-bar-block">
                         <a class="w3-bar-item w3-round" href="#summary">About</a>
                         <a class="w3-bar-item w3-round" href="#input">Calculator</a>
-                        <a class="w3-bar-item w3-round" href="#output">Output</a>
+                        <a class="w3-bar-item w3-round" href="#output">Result</a>
                     </nav>
                 </div>
             </header>
@@ -36,35 +36,42 @@
                                 </div>
                             </div>
                         </div>
-                        <p>This Website can be used to plot mathematical equations.</p>
-                        <h2 class="w3-cursive">Key Features</h2 >
+                        <p>This website can be used to plot mathematical equations.</p>
+                        <h3 class="w3-cursive">Key Features</h3>
                         <ol>
                             <li>
                                 <b>Diverse equations</b>
                                 <ul>
                                     <li>GraphJS handles standard arithmetic operations, including addition, subtraction, multiplication, and division. The equations have to be in a syntax that can be executed as PHP code.</li>
-                                    <li>Some functions such as square root (sqrt()), exponential (x ** 2) and trigonometric calculations (sin(a), cos(a), tan(a)) are available.</li>
+                                    <li>Some functions such as square root (sqrt(x)), exponential (x ** 2) and trigonometric calculations (sin(a), cos(a), tan(a)) are available.</li>
                                 </ul>
                             </li>
                             <li>
                                 <b>Graph plotting</b>
                                 <ul>
                                     <li>Users can input a mathematical equation into the calculator.</li>
-                                    <li>The equation will be executed and as a result you will see the plot of that equation</li>
+                                    <li>The equation will be executed and as a result you will see the plot of that equation.</li>
                                 </ul>
                             </li>
                             <li>
                                 <b>Constants</b>
                                 <ul>
-                                    <li>GraphJS supports two important constants: PI and E</li>
-                                    <li>These can be used as follow: %pi, %e (e.g. sin(%pi * x))</li>
+                                    <li>GraphJS supports two important constants: PI and E.</li>
+                                    <li>These can be used as follow: %pi, %e (e.g. sin(%pi * x)).</li>
                                 </ul>
                             </li>
                             <li>
                                 <b>Saving equations</b>
                                 <ul>
                                     <li>You can save your equation by checking the "Save equation" checkbox and by giving it a name.</li>
-                                    <li>Saved equations will be listed in a dropdown, so you can load a previous equation</li>
+                                    <li>Saved equations will be listed in a dropdown so you can load them again.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <b>Changing color</b>
+                                <ul>
+                                    <li>If you dont like the color of the website you can easily change it in the top right corner.</li>
+                                    <li>The selected color will be saved as a cookie 🍪</li>
                                 </ul>
                             </li>
                         </ol>
@@ -122,9 +129,11 @@
                             <input type="submit" class="w3-btn w3-card w3-round w3-block bg-primary" value="Execute" />
                         </form>
     
-                        <div class="w3-row w3-margin-bottom w3-margin-top w3-padding-top-24 w3-border-top">
+                        <h2 id="output" class="w3-cursive w3-margin-top">Result</h2>
+                        
+                        <div class="w3-row w3-margin-bottom">
                             <div class="w3-col l4 m6">
-                                <label for="load_equation">Or load a previous equation:</label>
+                                <label for="load_equation">Load a previous equation:</label>
                             </div>
                             <div class="w3-col l8 m6 w3-row">
                                 <select name="name" id="load_equation" class="w3-select w3-border">
@@ -133,8 +142,6 @@
                             </div>
                         </div>
     
-    
-                        <h2 id="output" class="w3-cursive">Result</h2>
                         <div id="result">
                             <canvas id="plot"></canvas>
                         </div>
@@ -143,6 +150,6 @@
             </main>
         </div>
 
-        <script src="var/app.min.js"></script>
+        <script src="js/app.js"></script>
     </body>
 </html>

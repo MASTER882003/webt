@@ -30,13 +30,16 @@ function setPrimaryColor(color) {
 function reloadStoredEquations() {
     fetch('server.php?action=get_equations').then(response => response.json()).then(response => {
         if (response.data.equations.length == 0) return;
-
-        equationLoaderDropdown.innerHTML = '';
-        equationLoaderDropdown.append(new Option('Select equation', null));
-
-        response.data.equations.map(equation => new Option(equation.name, equation.name))
-            .forEach(option => equationLoaderDropdown.append(option));
+        setEquationDropdownOptions(response.data.equations);
     });
+}
+
+function setEquationDropdownOptions(equations){
+    equationLoaderDropdown.innerHTML = '';
+    equationLoaderDropdown.append(new Option(equations.length > 0 ? 'Select equation' : 'No equations stored', null));
+
+    equations.map(equation => new Option(equation.name, equation.name))
+        .forEach(option => equationLoaderDropdown.append(option));
 }
 
 function drawLine(from, to) {
@@ -211,9 +214,7 @@ function onSubmit(event) {
 
             plot(response.data.plot);
 
-            if (document.querySelector('input[name="persist"]').checked) {
-                reloadStoredEquations();
-            }
+            setEquationDropdownOptions(response.data.equations);
         })
         .catch(error => {
             console.log(error);
@@ -282,7 +283,7 @@ function plot(dataPoints) {
 
 
     // Y-Lines to top
-    for (let i = 0; centerPosition.y - i * spaceBetweenLines > 0; i++) {
+    for (let i = 1; centerPosition.y - i * spaceBetweenLines > 0; i++) {
         const axisLabel = dimension < 0 ? (i * stepSize).toFixed(Math.min(20, -dimension)) : i * stepSize;
 
         drawLine([0, centerPosition.y - i * spaceBetweenLines], [width, centerPosition.y - i * spaceBetweenLines]);
@@ -291,7 +292,7 @@ function plot(dataPoints) {
     }
 
     // Y-Lines to bottom
-    for (let i = 0; centerPosition.y + i * spaceBetweenLines < height; i++) {
+    for (let i = 1; centerPosition.y + i * spaceBetweenLines < height; i++) {
         const axisLabel = dimension < 0 ? (i * stepSize).toFixed(Math.min(20, -dimension)) : i * stepSize;
         
         drawLine([0, centerPosition.y + i * spaceBetweenLines], [width, centerPosition.y + i * spaceBetweenLines]);
@@ -324,10 +325,17 @@ function plot(dataPoints) {
     ctx.moveTo(centerPosition.x + dataPoints[0].x * canvasScale, centerPosition.y - dataPoints[0].y * canvasScale);
 
     for (let i = 1; i < dataPoints.length; i++) {
+        if (dataPoints[i].y == null) {
+
+            // Go to next point if possible
+            if (i + 1 < dataPoints.length) {
+                ctx.moveTo(centerPosition.x + dataPoints[i + 1].x * canvasScale, centerPosition.y - dataPoints[i + 1].y * canvasScale);
+            }
+            continue;
+        }
         ctx.lineTo(centerPosition.x + dataPoints[i].x * canvasScale, centerPosition.y - dataPoints[i].y * canvasScale);
     }
     ctx.stroke();
 }
-
 
 window.onload = init;

@@ -15,7 +15,7 @@
 - [x] Einzelne Bereiche
   - [x] Navigationsbereich -> Abspringen in die einzelnen Bereiche
   - [x] Informationsbereich
-    - [x] Erklären wie das ganze Funktioniert
+    - [x] Erklären wie das ganze funktioniert
     - [x] Ein Paragraph und ein Bild
   - [x] Eingabebereich
     - [x] Button
